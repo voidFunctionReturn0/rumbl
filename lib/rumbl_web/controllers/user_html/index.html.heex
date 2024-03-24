@@ -1,0 +1,14 @@
+<%!-- link 참고: https://www.reddit.com/r/elixir/comments/16ertv9/how_to_create_a_link_in_phoenix/  --%>
+<.header>Listing Users</.header>
+
+<.table id="users" rows={@users}>
+  <:col :let={user} label="name">
+    <.user user={user} />
+  </:col>
+  
+  <:col :let={user}>
+    <.link patch={~p"/users/#{user.id}"}>
+      View
+    </.link>
+  </:col>
+</.table>
