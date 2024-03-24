@@ -1,5 +1,7 @@
 # Rumbl
 
+Programming Phoenix example for Phoenix v1.7
+
 To start your Phoenix server:
 
   * Run `mix setup` to install and setup dependencies

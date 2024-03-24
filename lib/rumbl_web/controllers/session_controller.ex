@@ -22,4 +22,10 @@ defmodule RumblWeb.SessionController do
         |> render(:new, form: %{})
     end
   end
+
+  def delete(conn, _) do
+    conn
+    |> RumblWeb.Auth.logout()
+    |> redirect(to: ~p"/")
+  end
 end
