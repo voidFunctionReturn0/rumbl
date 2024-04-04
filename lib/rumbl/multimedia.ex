@@ -5,21 +5,23 @@ defmodule Rumbl.Multimedia do
 
   import Ecto.Query, warn: false
   alias Rumbl.Repo
-
   alias Rumbl.Multimedia.Video
+  alias Rumbl.Accounts
+  alias Rumbl.Multimedia.Category
 
-  @doc """
-  Returns the list of videos.
-
-  ## Examples
-
-      iex> list_videos()
-      [%Video{}, ...]
-
-  """
-  def list_videos do
-    Repo.all(Video)
+  def create_category!(name) do
+    Repo.insert!(%Category{name: name}, on_conflict: :nothing)
   end
+
+  def list_alphabetical_categories do
+    Category
+    |> Category.alphabetical()
+    |> Repo.all()
+  end
+
+  # def list_videos do
+  #   Repo.all(Video)
+  # end
 
   @doc """
   Gets a single video.
@@ -35,7 +37,24 @@ defmodule Rumbl.Multimedia do
       ** (Ecto.NoResultsError)
 
   """
-  def get_video!(id), do: Repo.get!(Video, id)
+  # def get_video!(id), do: Repo.get!(Video, id)
+
+  def list_user_videos(%Accounts.User{} = user) do
+    Video
+    |> user_videos_query(user)
+    |> Repo.all()
+  end
+
+  def get_user_video!(%Accounts.User{} = user, id) do
+    Video
+    |> user_videos_query(user)
+    |> Repo.get!(id)
+  end
+
+  defp user_videos_query(query, %Accounts.User{id: user_id}) do
+    from(v in query, where: v.user_id == ^user_id)
+  end
+
 
   @doc """
   Creates a video.
@@ -49,9 +68,10 @@ defmodule Rumbl.Multimedia do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_video(attrs \\ %{}) do
+  def create_video(%Accounts.User{} = user, attrs \\ %{}) do
     %Video{}
     |> Video.changeset(attrs)
+    |> Ecto.Changeset.put_assoc(:user, user)
     |> Repo.insert()
   end
 
