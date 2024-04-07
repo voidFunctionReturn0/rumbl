@@ -24,7 +24,10 @@ defmodule Rumbl.DataCase do
       import Ecto.Changeset
       import Ecto.Query
       import Rumbl.DataCase
-      import Rumbl.TestHelpers
+      import Rumbl.{
+        AccountFixtures,
+        MultimediaFixtures
+      }
     end
   end
 
