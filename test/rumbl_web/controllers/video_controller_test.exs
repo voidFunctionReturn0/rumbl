@@ -1,6 +1,12 @@
 defmodule RumblWeb.VideoControllerTest do
   use RumblWeb.ConnCase, async: true
 
+  @create_attrs %{
+    url: "http://youtu.be",
+    title: "vid",
+    description: "a vid"}
+  @invalid_attrs %{title: "invalid"}
+
   test "requires user authentication on all actions", %{conn: conn} do
     Enum.each([
       get(conn, ~p"/manage/videos/new"),
@@ -17,6 +23,10 @@ defmodule RumblWeb.VideoControllerTest do
   end
 
   describe "with a logged-in user" do
+    alias Rumbl.Multimedia
+
+    defp video_count(user), do: Enum.count(Multimedia.list_user_videos(user))
+
     setup %{conn: conn, login_as: username} do
       user = user_fixture(username: username)
       conn = assign(conn, :current_user, user)
@@ -36,6 +46,37 @@ defmodule RumblWeb.VideoControllerTest do
       assert String.contains?(conn.resp_body, user_video.title)
       refute String.contains?(conn.resp_body, other_video.title)
     end
+
+    @tag login_as: "max"
+    test "creates user video and redirects", %{conn: conn, user: user} do
+      create_conn = post conn, ~p"/manage/videos", video: @create_attrs
+      assert %{id: id} = redirected_params(create_conn)
+      assert redirected_to(create_conn) == ~p"/manage/videos/#{id}"
+
+      conn = get conn, ~p"/manage/videos/#{id}"
+      assert html_response(conn, 200) =~ "Video"
+      assert Multimedia.get_user_video!(user, id).user_id == user.id
+    end
+
+    @tag login_as: "max"
+    test "does not create vid, renders errors when invalid", %{conn: conn, user: user} do
+      count_before = video_count(user)
+      conn = post conn, ~p"/manage/videos", video: @invalid_attrs
+      assert html_response(conn, 200) =~ "check the errors"
+      assert video_count(user) == count_before
+    end
+  end
+
+  test "authorizes actions against access by other users", %{conn: conn} do
+    owner = user_fixture(username: "owner")
+    video = video_fixture(owner, @create_attrs)
+    non_owner = user_fixture(username: "sneaky")
+    conn = assign(conn, :current_user, non_owner)
+
+    assert_error_sent :not_found, fn -> get conn, ~p"/manage/videos/#{video.id}" end
+    assert_error_sent :not_found, fn -> get conn, ~p"/manage/videos/#{video.id}/edit" end
+    assert_error_sent :not_found, fn -> put conn, ~p"/manage/videos/#{video.id}", video: @create_attrs end
+    assert_error_sent :not_found, fn -> delete conn, ~p"/manage/videos/#{video.id}" end
   end
 
   # @create_attrs %{description: "some description", title: "some title", url: "some url"}
