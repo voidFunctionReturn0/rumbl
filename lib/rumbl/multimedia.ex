@@ -37,7 +37,7 @@ defmodule Rumbl.Multimedia do
       ** (Ecto.NoResultsError)
 
   """
-  # def get_video!(id), do: Repo.get!(Video, id)
+  def get_video!(id), do: Repo.get!(Video, id)
 
   def list_user_videos(%Accounts.User{} = user) do
     Video

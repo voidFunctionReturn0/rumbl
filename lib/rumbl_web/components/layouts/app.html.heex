@@ -26,20 +26,33 @@
         Get Started <span aria-hidden="true">&rarr;</span>
       </a>
       
-      <%= if @current_user do %>
-        <%= @current_user.username %>
-        <.link href={~p"/sessions/delete"} method="delete">
-          Log out
-        </.link>
-      <% else %>
-        <.link href={~p"/users/new"}>
-          Register
-        </.link>
-        
-        <.link href={~p"/sessions/new"}>
-          Log in
-        </.link>
-      <% end %>
+      <ul>
+        <%= if @current_user do %>
+          <li>
+            <%= @current_user.username %>
+          </li>
+          
+          <li>
+            <.link href={~p"/manage/videos"}>
+              My Videos
+            </.link>
+          </li>
+          
+          <li>
+            <.link href={~p"/sessions/delete"} method="delete">
+              Log out
+            </.link>
+          </li>
+        <% else %>
+          <.link href={~p"/users/new"}>
+            Register
+          </.link>
+          
+          <.link href={~p"/sessions/new"}>
+            Log in
+          </.link>
+        <% end %>
+      </ul>
     </div>
   </div>
 </header>

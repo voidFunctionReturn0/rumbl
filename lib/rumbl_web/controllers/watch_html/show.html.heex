@@ -1,0 +1,21 @@
+<div class="row">
+  <div class="column column-60">
+    <.header>
+      <%= @video.title %>
+    </.header>
+     <div id="video" data-id={@video.id} data-player-id={player_id(@video)} />
+  </div>
+  
+  <div class="column annotations">
+    <h3>Annotations</h3>
+    
+    <div id="msg-container"></div>
+    
+    <div>
+      <textarea id="msg-input" rows="3" placeholder="Comment..."></textarea>
+      <button id="msg-submit" class="button column" type="submit">
+        Post
+      </button>
+    </div>
+  </div>
+</div>
