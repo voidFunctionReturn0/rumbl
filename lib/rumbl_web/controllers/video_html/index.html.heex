@@ -16,7 +16,7 @@
   
   <:action :let={video}>
     <.link href={~p"/watch/#{video.id <> "-" <> video.slug}"}>
-      Watch
+      <%!-- <.link href={~p"/watch/#{video.id}"}> --%> Watch
     </.link>
   </:action>
   
