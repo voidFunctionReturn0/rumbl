@@ -15,9 +15,7 @@
   <:col :let={video} label="Description"><%= video.description %></:col>
   
   <:action :let={video}>
-    <.link href={~p"/watch/#{video.id <> "-" <> video.slug}"}>
-      <%!-- <.link href={~p"/watch/#{video.id}"}> --%> Watch
-    </.link>
+    <.link href={~p"/watch/#{video}"}>Watch</.link>
   </:action>
   
   <:action :let={video}>
