@@ -42,12 +42,8 @@ liveSocket.connect()
 // >> liveSocket.disableLatencySim()
 window.liveSocket = liveSocket
 
+import UserSocket from "./user_socket"
+import Video from "./video"
 
-import Player from "./player"
-let video = document.getElementById("video")
+Video.init(UserSocket, document.getElementById("video"))
 
-if(video) {
-  Player.init(video.id, video.getAttribute("data-player-id"), () => {
-    console.log("player ready!")
-  })
-}
