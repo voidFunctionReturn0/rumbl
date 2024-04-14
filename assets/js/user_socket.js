@@ -11,6 +11,8 @@ let socket = new Socket("/socket", {
   logger: (kind, msg, data) => { console.log(`${kind}: ${msg}`, data)}
 })
 
+// console.log(`## userToken: ${window.userToken}`)
+
 // When you connect, you'll often need to authenticate the client.
 // For example, imagine you have an authentication plug, `MyAuth`,
 // which authenticates the session and assigns a `:current_user`.
