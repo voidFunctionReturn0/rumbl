@@ -14,15 +14,28 @@ defmodule RumblWeb.VideoChannel do
   #     {:error, %{reason: "unauthorized"}}
   #   end
   # end
-  def join("videos:" <> video_id, _params, socket) do
+  def join("videos:" <> video_id, params, socket) do
+    send(self(), :after_join)
+    last_seen_id = params["last_seen_id"] || 0
     video_id = String.to_integer(video_id)
     video = Multimedia.get_video!(video_id)
     annotations =
       video
-      |> Multimedia.list_annotations()
+      |> Multimedia.list_annotations(last_seen_id)
       |> AnnotationJSON.annotations()
 
     {:ok, %{annotations: annotations}, assign(socket, :video_id, video_id)}
+  end
+
+  @impl true
+  def handle_info(:after_join, socket) do
+    push(socket, "presence_state", RumblWeb.Presence.list(socket))
+    {:ok, _} = RumblWeb.Presence.track(
+      socket,
+      socket.assigns.user_id,
+      %{device: "brower"})
+
+    {:noreply, socket}
   end
 
   # Channels can be used in a request/response fashion
