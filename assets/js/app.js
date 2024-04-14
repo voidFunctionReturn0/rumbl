@@ -46,4 +46,3 @@ import UserSocket from "./user_socket"
 import Video from "./video"
 
 Video.init(UserSocket, document.getElementById("video"))
-
