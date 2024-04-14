@@ -4,6 +4,7 @@ defmodule RumblWeb.VideoChannel do
     Accounts,
     Multimedia
   }
+  alias RumblWeb.AnnotationJSON
 
   @impl true
   # def join("video:lobby", payload, socket) do
@@ -14,7 +15,14 @@ defmodule RumblWeb.VideoChannel do
   #   end
   # end
   def join("videos:" <> video_id, _params, socket) do
-    {:ok, assign(socket, :video_id, String.to_integer(video_id))}
+    video_id = String.to_integer(video_id)
+    video = Multimedia.get_video!(video_id)
+    annotations =
+      video
+      |> Multimedia.list_annotations()
+      |> AnnotationJSON.annotations()
+
+    {:ok, %{annotations: annotations}, assign(socket, :video_id, video_id)}
   end
 
   # Channels can be used in a request/response fashion
